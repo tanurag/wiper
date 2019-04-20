@@ -45,7 +45,7 @@ class FileInfo
 {
 
 public:
-    std::vector<file_ext_t> blkList;
+    std::vector<file_ext_t> *blkList;
     std::string filename;
     struct stat64 st;
     struct file_ext ext;
@@ -57,6 +57,7 @@ public:
     int fd;
     char linkname[32];
     FileInfo(std::string filename);
+    ~FileInfo();
     void stat_bdev();
 
 };

@@ -21,18 +21,23 @@ FileInfo::FileInfo(std::string filename)
     linkname[32] = { 0, };
     fd = -1;
     this->filename = filename;
+    blkList = new std::vector<file_ext_t>();
     fd = open(filename.c_str(), O_RDONLY|O_LARGEFILE);
     if (fd < 0) {
         Helper::printError("File Opening Error Occured");
         exit(-1);
     }
-    fsync(fd);
+
+    //fsync(fd);
     if (fstat64(fd, &st) < 0) {
         Helper::printError("File Opening Error occured");
         goto out;
     }
     stat_bdev();
+
     total_blks = (st.st_size + st.st_blksize - 1) / st.st_blksize;
+    printf("Total Blokcs:%ld\n",total_blks);
+    printf("St Size:%ld\n",st.st_size);
 
     blknum = 0;
     if (ioctl(fd, FIBMAP, &blknum) < 0) {
@@ -53,16 +58,21 @@ FileInfo::FileInfo(std::string filename)
             ext.end_blk = blknum;
             ext.blk_count++;
         } else {
-            blkList.push_back(ext);
+            blkList->push_back(ext);
             ext.f_pos = i * st.st_blksize;
             ext.start_blk = blknum;
             ext.end_blk = blknum;
             ext.blk_count = 1;
         }
     }
-   blkList.push_back(ext);
+    blkList->push_back(ext);
+
 out:
-        close(fd);
+    close(fd);
+}
+FileInfo::~FileInfo()
+{
+    delete blkList;
 }
 
 void FileInfo::stat_bdev()

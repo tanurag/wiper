@@ -19,10 +19,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     mainWidget = new QWidget();
+
+    /*Init Lists */
     listItem = new std::vector<QListWidgetItem*>();
     fileInfoList = new std::vector<FileInfo*>();
+
     setWindowTitle("Wiper");
     setFixedSize(800,600);
+
     mainLayout = new QHBoxLayout();
     mainWidget->setLayout(mainLayout);
     createToolbar();
@@ -61,13 +65,18 @@ void MainWindow::about()
 void MainWindow::open()
 {
     QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setViewMode(QFileDialog::Detail);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
     QStringList fileNames;
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-    addItemToList(fileNames[0]);
+    //Add all the selected file in list
+    for ( const auto& i : fileNames  )
+    {
+         addItemToList(i);
+    }
+
 
 }
 
@@ -128,13 +137,35 @@ void MainWindow::addItemToList(QString listName)
 void MainWindow::setSideBar()
 {
 
+    int blkDevInfoStartRow = 0;
+    int fileInfoStartRow = 3;
+    int blkInfoStartRow = 0;
+    int fileInfoFieldColumn = 0;
+    int blkDevInfoFieldColumn = 0;
+
 
     QHBoxLayout *sideMainLayout = new QHBoxLayout();
     QGridLayout *sideBarLayout = new QGridLayout();
 
-    //QLabel *blkDevHLabel = new QLabel(this);
-    //blkDevHLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    //blkDevHLabel->setText("<b>Block Device Info</b>");
+    blkDevHLabel = new QLabel(this);
+    blkDevHLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    blkDevHLabel->setText("<b>Block Device Info</b>");
+
+    blkDevLabel = new QLabel(this);
+    blkDevLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    blkDevLabel->setText("<b>Device</b>");
+
+    startLbaLabel = new QLabel(this);
+    startLbaLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    startLbaLabel->setText("<b>Start LBA</b>");
+
+    blkDevField = new QLabel(this);
+    blkDevField->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    blkDevField->setText("");
+
+    startLbaField = new QLabel(this);
+    startLbaField->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    startLbaField->setText(" ");
 
     QLabel *fileHLabel = new QLabel(this);
     fileHLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -218,28 +249,32 @@ void MainWindow::setSideBar()
     blksField->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     blksField->setText(" ");
 
-    //sideBarLayout->addWidget(blkDevHLabel,0,0,1,2,Qt::AlignCenter);
+    sideBarLayout->addWidget(blkDevHLabel,blkDevInfoStartRow,0,1,2,Qt::AlignCenter);
+    sideBarLayout->addWidget(blkDevLabel,blkDevInfoStartRow+1,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(startLbaLabel,blkDevInfoStartRow+2,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(blkDevField,blkDevInfoStartRow+1,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(startLbaField,blkDevInfoStartRow+2,1,1,1,Qt::AlignRight);
 
-    sideBarLayout->addWidget(fileHLabel,0,0,1,2,Qt::AlignCenter);
-    sideBarLayout->addWidget(devLabel,1,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(inodeLabel,2,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(modeLabel,3,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(nlinkLabel,4,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(uidLabel,5,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(gidLabel,6,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(sizeLabel,7,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(blkSizeLabel,8,0,1,1,Qt::AlignLeft);
-    sideBarLayout->addWidget(blksLabel,9,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(fileHLabel,fileInfoStartRow,0,1,2,Qt::AlignCenter);
+    sideBarLayout->addWidget(devLabel,fileInfoStartRow+1,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(inodeLabel,fileInfoStartRow+2,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(modeLabel,fileInfoStartRow+3,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(nlinkLabel,fileInfoStartRow+4,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(uidLabel,fileInfoStartRow+5,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(gidLabel,fileInfoStartRow+6,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(sizeLabel,fileInfoStartRow+7,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(blkSizeLabel,fileInfoStartRow+8,0,1,1,Qt::AlignLeft);
+    sideBarLayout->addWidget(blksLabel,fileInfoStartRow+9,0,1,1,Qt::AlignLeft);
 
-    sideBarLayout->addWidget(devField,1,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(inodeField,2,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(modeField,3,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(nlinkField,4,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(uidField,5,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(gidField,6,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(sizeField,7,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(blkSizeField,8,1,1,1,Qt::AlignRight);
-    sideBarLayout->addWidget(blksField,9,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(devField,fileInfoStartRow+1,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(inodeField,fileInfoStartRow+2,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(modeField,fileInfoStartRow+3,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(nlinkField,fileInfoStartRow+4,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(uidField,fileInfoStartRow+5,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(gidField,fileInfoStartRow+6,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(sizeField,fileInfoStartRow+7,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(blkSizeField,fileInfoStartRow+8,1,1,1,Qt::AlignRight);
+    sideBarLayout->addWidget(blksField,fileInfoStartRow+9,1,1,1,Qt::AlignRight);
 
     //sideBarLayout->addWidget(blksHLabel,0,0,1,2,Qt::AlignCenter);
 
@@ -252,6 +287,25 @@ void MainWindow::setSideBar()
 
 void MainWindow::updateSideBarInfo()
 {
-    QMessageBox::about(this,tr("Wiper"),
-                       tr("Focus Changed"));
+
+
+    if(fileInfoList->size()<fileListWidget->currentRow())
+        return;
+
+    FileInfo *temp = fileInfoList->at(fileListWidget->currentRow());
+
+    blkDevField->setText(QString::fromUtf8(temp->linkname));
+    startLbaField->setText(QString::number(temp->start_lba));
+
+    //File Info Field
+    devField->setText(QString::number(temp->st.st_dev));
+    inodeField->setText(QString::number(temp->st.st_ino));
+    uidField->setText(QString::number(temp->st.st_uid));
+    gidField->setText(QString::number(temp->st.st_gid));
+    nlinkField->setText(QString::number(temp->st.st_nlink));
+    sizeField->setText(QString::number(temp->st.st_size));
+    blkSizeField->setText(QString::number(temp->st.st_blksize));
+    blksField->setText(QString::number(temp->total_blks));
+    modeField->setText(QString::number(temp->st.st_mode));
+
 }

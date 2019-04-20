@@ -27,7 +27,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include <QGridLayout>
 #include <fileinfo.h>
-
+#include <helper.h>
+#include <algorithm>
 
 
 class MainWindow : public QMainWindow
@@ -55,6 +56,13 @@ private:
     std::vector<FileInfo*> *fileInfoList;
     QWidget *mainWidget;
 
+    //Blk Info Fields
+    QLabel *blkDevHLabel;
+    QLabel *blkDevLabel;
+    QLabel *startLbaLabel;
+    QLabel *blkDevField;
+    QLabel *startLbaField;
+
 
     //FileInfo Fields
     QLabel *devField;
@@ -66,6 +74,14 @@ private:
     QLabel *sizeField;
     QLabel *blkSizeField;
     QLabel *blksField;
+
+    //Blk Info Label
+    QLabel *blkInfoLabel;
+    QLabel *filePosLabel;
+    QLabel *startBlkLabel;
+    QLabel *endBlkLabel;
+    QLabel *blocksLabel;
+
 
 private slots:
     void about();
